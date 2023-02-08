@@ -1,7 +1,6 @@
 
 from hanspell import spell_checker
 from googletrans import Translator
-import os
 from tqdm import tqdm
 
 path = './textFolder'
