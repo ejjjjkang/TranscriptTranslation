@@ -21,22 +21,14 @@ def read_text_file(file_path,  new_file_path ):
             w.write(line)
             w.write('\n')
             print(line)
-            try: #if google api shows error, pass
-                #access url
-                container = driver.find_element(By.CSS_SELECTOR, "#panelTranslateText > div.lmt__sides_container.lmt__sides_container--focus_source > div.lmt__sides_wrapper > section.lmt__side_container.lmt__side_container--source > div.lmt__textarea_container.focus.lmt__textarea_container--focus > div.lmt__inner_textarea_container > d-textarea > div")
-                container.send_keys(line)
-                driver.implicitly_wait(5)
-                #content = container.find_element(By.CSS_SELECTOR, "#panelTranslateText > div.lmt__sides_container > div.lmt__sides_wrapper > section.lmt__side_container.lmt__side_container--target > div.lmt__textarea_container.lmt__raise_alternatives_placement > div.lmt__inner_textarea_container > d-textarea")
-                #driver.find_element(By,CSS_SELECTOR, "#panelTranslateText > div.lmt__sides_container > div.lmt__sides_wrapper > section.lmt__side_container.lmt__side_container--target > div.lmt__textarea_container.lmt__raise_alternatives_placement > div:nth-child(6) > div > div > div:nth-child(5) > span:nth-child(2) > span > span > button").text
-                driver.find_element(By.CSS_SELECTOR, "#panelTranslateText > div.lmt__sides_container > div.lmt__sides_wrapper > section.lmt__side_container.lmt__side_container--target > div.lmt__textarea_container.lmt__raise_alternatives_placement > div:nth-child(6) > div > div > div:nth-child(5) > span:nth-child(2) > span > span > button").click()
+            container = driver.find_element(By.CSS_SELECTOR, "#panelTranslateText > div.lmt__sides_container.lmt__sides_container--focus_source > div.lmt__sides_wrapper > section.lmt__side_container.lmt__side_container--source > div.lmt__textarea_container.focus.lmt__textarea_container--focus > div.lmt__inner_textarea_container > d-textarea > div")
+            container.send_keys(line)
+            driver.implicitly_wait(7)
+            driver.find_element(By.XPATH, '//*[@id="panelTranslateText"]/div[1]/div[2]/section[2]/div[3]/div[6]/div/div/div[2]/span[2]/span/span/button').click()
 
-
-
-            except:
-                pass
             print(pyperclip.paste())
             w.write(pyperclip.paste())
-            driver.implicitly_wait(3)
+            driver.implicitly_wait(5)
             driver.find_element(By.CSS_SELECTOR, "#translator-source-clear-button").click()
 
             w.write('\n\n')
@@ -50,6 +42,6 @@ for file in os.listdir(path):
 
     if file.endswith('.txt'):
         file_path = os.path.join(path, file)
-        new_file_path = os.path.join(path,f"translated_{file}")
+        new_file_path = os.path.join(path,f"translated_dl_{file}")
         read_text_file(file_path,  new_file_path )
 
