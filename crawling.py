@@ -6,6 +6,9 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import pyperclip
+from selenium.webdriver.support.wait import WebDriverWait
+
+
 
 path = './textFolder'
 
@@ -20,16 +23,19 @@ def read_text_file(file_path,  new_file_path ):
         for line in lines:
             w.write(line)
             w.write('\n')
-            print(line)
-            container = driver.find_element(By.CSS_SELECTOR, "#panelTranslateText > div.lmt__sides_container.lmt__sides_container--focus_source > div.lmt__sides_wrapper > section.lmt__side_container.lmt__side_container--source > div.lmt__textarea_container.focus.lmt__textarea_container--focus > div.lmt__inner_textarea_container > d-textarea > div")
-            container.send_keys(line)
-            driver.implicitly_wait(7)
-            driver.find_element(By.XPATH, '//*[@id="panelTranslateText"]/div[1]/div[2]/section[2]/div[3]/div[6]/div/div/div[2]/span[2]/span/span/button').click()
+            if line == '':
+                pass
+            else:
+                print(line)
+                container = driver.find_element(By.XPATH, '//*[@id="panelTranslateText"]/div[1]/div[2]/section[1]/div[3]/div[2]/d-textarea/div')
+                container.send_keys(line)
+                el = WebDriverWait(driver, timeout=3).until(lambda d: d.find_element(By.XPATH, '//*[@id="panelTranslateText"]/div[1]/div[2]/section[2]/div[3]/div[6]/div/div/div[2]/span[2]/span/span/button'))
+                el.click()
 
-            print(pyperclip.paste())
-            w.write(pyperclip.paste())
-            driver.implicitly_wait(5)
-            driver.find_element(By.CSS_SELECTOR, "#translator-source-clear-button").click()
+                print(pyperclip.paste())
+                w.write(pyperclip.paste())
+                driver.implicitly_wait(5)
+                driver.find_element(By.CSS_SELECTOR, "#translator-source-clear-button").click()
 
             w.write('\n\n')
         w.close()
