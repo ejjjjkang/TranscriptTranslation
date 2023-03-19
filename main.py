@@ -1,16 +1,19 @@
 
+import os
 from hanspell import spell_checker
 from googletrans import Translator
 from tqdm import tqdm
+import pandas as pd
 
 path = './textFolder'
-
 
 #sentence corrections
 def read_text_file(file_path,  new_file_path ):
     translator = Translator(raise_exception=True)
     with open(file_path, 'r') as f:
-        lines = f.read().splitlines() #read file by list
+        lines = pd.read_csv(f)
+        print(lines)
+        #lines = f.read().splitlines() #read file by list
         print(f'start {new_file_path}')
         result = spell_checker.check(lines)
 
@@ -29,7 +32,7 @@ def read_text_file(file_path,  new_file_path ):
 
 
 for file in os.listdir(path):
-    if file.endswith('.txt'):
+    if file.endswith('.csv'):
         file_path = os.path.join(path, file)
         new_file_path = os.path.join(path,f"translated_{file}")
         read_text_file(file_path,  new_file_path )
