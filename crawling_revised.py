@@ -7,47 +7,53 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import pyperclip
+from openpyxl import Workbook
 from selenium.webdriver.support.wait import WebDriverWait
 import pandas as pd
 
-
 path = './textFolder'
-sub_path = './textFolder/translated'
+sub_path = './textFolder/translated_new'
 
 #sentence corrections
-def read_text_file(file_path,  new_file_path ):
+def read_text_file(file_path, driver):
     with open(file_path, 'r') as f:
+        wb = Workbook()
+        ws = wb.active
+        data = [["num", "original_text", "translated_text"]]
+        num = 0
 
-        # lines = pd.read_csv(f, header=0, usecols=['Text'])
-        #lines = f.read()
-        list_of_csv = list(f.readlines())
-        #list_of_csv = [list(row) for row in lines.values]
-        #lines = f.read().splitlines() #read file by list in txt file
-        print(f'start {new_file_path}')
-        w = open(new_file_path, 'w')
-        driver.get('https://www.deepl.com/translator#es/en/')
+        lines = f.read().splitlines() #read file by list in txt file
+        print(f'start {file_path}')
+        driver.get('https://www.deepl.com/translator#ko/en/')
         driver.implicitly_wait(3)
-        for line in list_of_csv:
-            w.write(line)
-            w.write('\n')
+        for line in lines:
+            line_block = []
+            line_block.append(num)
+            line_block.append(line)
             try:
-                print(line)
                 container = driver.find_element(By.XPATH, '//*[@id="panelTranslateText"]/div[1]/div[2]/section[1]/div[3]/div[2]/d-textarea/div')
                 container.send_keys(line)
                 el = WebDriverWait(driver, timeout=5).until(lambda d: d.find_element(By.XPATH, '//*[@id="panelTranslateText"]/div[1]/div[2]/section[2]/div[3]/div[6]/div/div/div[2]/span[2]/span/span/button'))
                 el.click()
-
                 print(pyperclip.paste())
-                w.write(pyperclip.paste())
+                line_block.append(pyperclip.paste())
+                # w.write(pyperclip.paste())
                 driver.implicitly_wait(10)
                 driver.find_element(By.CSS_SELECTOR, "#translator-source-clear-button").click()
+                num +=1
             except:
+                line_block.append("skip")
                 pass
-
-            w.write('\n\n')
-        w.close()
+            data.append(line_block)
         driver.close()
-        print(f'finish! for {new_file_path}')
+        for row in data:
+            ws.append(row)
+        file_name = file[:2]
+        new_file_path = os.path.join(sub_path,f"translated_dl_{file_name}.xlsx")
+        wb.save(f"{new_file_path}")
+        print(f'finish! for {file_path}')
+
+
 
 for file in os.listdir(path):
     driver = webdriver.Chrome('./chromedriver_mac_arm64/chromedriver')
@@ -55,6 +61,4 @@ for file in os.listdir(path):
 
     if file.endswith('.txt'):
         file_path = os.path.join(path, file)
-        new_file_path = os.path.join(sub_path,f"translated_dl_{file}")
-        read_text_file(file_path,  new_file_path )
-
+        read_text_file(file_path, driver)

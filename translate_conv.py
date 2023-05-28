@@ -1,15 +1,12 @@
-#https://sites.google.com/chromium.org/driver/
 
-#import driver
 import os
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
-import pyperclip
 from selenium.webdriver.support.wait import WebDriverWait
 import pandas as pd
-
+import pyperclip
 
 path = './textFolder'
 sub_path = './textFolder/translated'
@@ -53,8 +50,8 @@ for file in os.listdir(path):
     driver = webdriver.Chrome('./chromedriver_mac_arm64/chromedriver')
     driver.implicitly_wait(3)
 
-    if file.endswith('.txt'):
+    if file.endswith('.csv'):
         file_path = os.path.join(path, file)
         new_file_path = os.path.join(sub_path,f"translated_dl_{file}")
-        read_text_file(file_path,  new_file_path )
+        read_text_file(file_path, new_file_path)
 
